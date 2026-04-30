@@ -1,0 +1,18 @@
+## 11-Feb-2023
+# Implemented transforms and its on-screen scoring
+
+## 05-Feb-2023
+# Fixed capture beam collision with fighter (collision with sprite shissor wasn't accurate)
+
+## 02-Feb-2023
+# Implemented on-screen scoring for bosses
+# Implemented on-screen scoring for cleared waves during challenge-stage
+
+## 01-Feb-2023
+# Implemented movement pattern for bosses
+# Enhanced cargo feature
+# Enhanced and fix Attacker service
+# Refactored a lot of classes
+
+## 27-Jan-2023
+# First release

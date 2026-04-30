@@ -1,0 +1,11 @@
+# Attackers algorithm
+# -------------------
+# - Max two attacker slots at once, included a boss with its cargo (in this case they counts as 1 slot)
+# - If a boss has its cargo it will be selected and no other enemies are launched
+# - A cargo consists in a boss with a maximum of 2 butterflies, plus the captured fighter
+# - While there are at least 2 alive bosses they will be chosen one by one with a round-robin selection
+# - Boss selection should favor the ones having more cargo
+# - A boss at once with one exception: while a boss make the beam, another boss with its cargo can be selected
+# - If an attacker boss lose all its cargo, other kind of enemy can be selected from attackers
+# - The beam will be done with at least 2 alive bosses. Only 1 boss alive will not emit beam anymore.
+# - If the last boss keeps alive, that boss and 2 simple attackers will alternate

@@ -1,0 +1,14 @@
+# -----------------
+# TODO
+# [X] Design and implement movement pattern for bosses
+# [ ] Refine, fix and tune attack algorithm
+# [X] Fix capture beam collision with fighter
+# [X] Ehnance and fixed cargo behavior
+# [X] Implement on-screen scoring for bosses
+# [X] Implement on-screen scoring for challenge waves
+# [X] Handle other kind of enemies: transforms (Scorpion, Bosconian, Galaxian)
+# [X] Implement on-screen scoring for transforms triple
+# [ ] Design and implement other challenge stages (> 3) and put in Dragonfly, Mosquito & Enterprise
+# [ ] In challenge stages there must be no extra enemies
+# [ ] Fix and enhance enemies animations
+# -----------------
