@@ -1,1 +1,0 @@
-arcade/run.sh
