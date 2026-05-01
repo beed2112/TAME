@@ -24,13 +24,13 @@ Terminal Tetris built with Python `curses`.
 
 ## Install
 ```bash
-cd /home/beed2112/chatgptspace/tetris/tetrisconsole
+cd <CLONELOC>/TAME/tetris/tetrisconsole
 ./install.sh
 ```
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/tetris/tetrisconsole
+cd <CLONELOC>/TAME/tetris/tetrisconsole
 ./run.sh
 ```
 

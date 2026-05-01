@@ -16,13 +16,13 @@ Terminal Centipede-style fixed shooter built with Python `curses`.
 
 ## Install
 ```bash
-cd /home/beed2112/chatgptspace/centipede/centipedeconsole
+cd <CLONELOC>/TAME/centipede/centipedeconsole
 ./install.sh
 ```
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/centipede/centipedeconsole
+cd <CLONELOC>/TAME/centipede/centipedeconsole
 ./run.sh
 ```
 

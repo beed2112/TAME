@@ -17,7 +17,9 @@ TAME is a terminal-first arcade launcher for the local cabinet set:
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/arcade
+git clone https://github.com/beed2112/TAME.git
+cd TAME
+cd arcade
 ./run.sh
 ```
 

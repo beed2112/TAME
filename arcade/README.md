@@ -8,7 +8,7 @@ Terminal launcher for the local arcade set:
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/arcade
+cd <CLONELOC>/TAME/arcade
 ./run.sh
 ```
 

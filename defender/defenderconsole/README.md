@@ -15,13 +15,13 @@ Terminal Defender-style game built with Python `curses`.
 
 ## Install
 ```bash
-cd /home/beed2112/chatgptspace/defender/defenderconsole
+cd <CLONELOC>/TAME/defender/defenderconsole
 ./install.sh
 ```
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/defender/defenderconsole
+cd <CLONELOC>/TAME/defender/defenderconsole
 ./run.sh
 ```
 

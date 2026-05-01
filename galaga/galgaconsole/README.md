@@ -11,13 +11,13 @@ Terminal-based Galaga-style game for Kali.
 
 ## Install
 ```bash
-cd /home/beed2112/chatgptspace/galaga/galgaconsole
+cd <CLONELOC>/TAME/galaga/galgaconsole
 ./install.sh
 ```
 
 ## Run
 ```bash
-cd /home/beed2112/chatgptspace/galaga/galgaconsole
+cd <CLONELOC>/TAME/galaga/galgaconsole
 ./run.sh
 ```
 
