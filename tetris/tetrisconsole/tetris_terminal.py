@@ -296,10 +296,15 @@ class Game:
             return
         self.cleared_rows = full_rows[:]
         self.line_flash_frames = 3
-        for row_idx in reversed(full_rows):
-            del self.board[row_idx]
-            self.board.insert(0, [None for _ in range(BOARD_WIDTH)])
         cleared = len(full_rows)
+        remaining_rows = [
+            row for idx, row in enumerate(self.board)
+            if idx not in full_rows
+        ]
+        self.board = (
+            [[None for _ in range(BOARD_WIDTH)] for _ in range(cleared)]
+            + remaining_rows
+        )
         self.lines += cleared
         self.level = 1 + (self.lines // 10)
         self.score += LINE_CLEAR_SCORES[cleared] * self.level
