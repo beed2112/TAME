@@ -101,6 +101,7 @@ class Game:
         self.high_score = 0
         self.last_score = 0
         self.games_played = 0
+        self.top_scores = []
         self.wave = 0
         self.running = True
         self.paused = False
@@ -159,35 +160,158 @@ class Game:
         return os.path.join(os.path.expanduser("~"), HIGH_SCORE_FILE)
 
     def load_score_file(self):
+        path = self.score_file_path()
         try:
-            with open(self.score_file_path(), "r", encoding="utf-8") as handle:
-                for line in handle:
-                    if "=" not in line:
-                        continue
-                    key, value = line.strip().split("=", 1)
-                    if key == "high_score" and value.isdigit():
-                        self.high_score = int(value)
-                    elif key == "last_score" and value.isdigit():
-                        self.last_score = int(value)
-                    elif key == "games_played" and value.isdigit():
-                        self.games_played = int(value)
+            with open(path, "r", encoding="utf-8") as handle:
+                lines = [line.strip() for line in handle.readlines() if line.strip()]
         except FileNotFoundError:
             return
         except OSError:
             return
 
+        if len(lines) == 1 and lines[0].isdigit():
+            legacy_score = int(lines[0])
+            self.high_score = max(self.high_score, legacy_score)
+            self.top_scores = [{"name": self.default_player_name(), "score": legacy_score}]
+            return
+
+        parsed = {}
+        entries = []
+        for line in lines:
+            if line.startswith("entry="):
+                payload = line[len("entry="):]
+                if "|" in payload:
+                    raw_name, raw_score = payload.rsplit("|", 1)
+                elif ":" in payload:
+                    raw_name, raw_score = payload.rsplit(":", 1)
+                else:
+                    continue
+                name = self.sanitize_name(raw_name)
+                if raw_score.strip().isdigit():
+                    entries.append({"name": name, "score": int(raw_score.strip())})
+                continue
+
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            parsed[key.strip()] = value.strip()
+
+        if parsed.get("high_score", "").isdigit():
+            self.high_score = int(parsed["high_score"])
+        if parsed.get("last_score", "").isdigit():
+            self.last_score = int(parsed["last_score"])
+        if parsed.get("games_played", "").isdigit():
+            self.games_played = int(parsed["games_played"])
+
+        self.top_scores = sorted(entries, key=lambda item: item["score"], reverse=True)[:10]
+        if self.top_scores:
+            self.high_score = max(self.high_score, self.top_scores[0]["score"])
+
     def save_score_file(self):
         self.high_score = max(self.high_score, self.score)
-        payload = (
-            f"high_score={self.high_score}\n"
-            f"last_score={self.score}\n"
-            f"games_played={self.games_played}\n"
-        )
+        lines = [
+            f"high_score={self.high_score}",
+            f"last_score={self.score}",
+            f"games_played={self.games_played}",
+        ]
+        for entry in self.top_scores[:10]:
+            lines.append(f"entry={entry['name']}|{entry['score']}")
+        payload = "\n".join(lines) + "\n"
         try:
             with open(self.score_file_path(), "w", encoding="utf-8") as handle:
                 handle.write(payload)
         except OSError:
             pass
+
+    def default_player_name(self):
+        uname = os.environ.get("USER") or os.environ.get("LOGNAME")
+        if uname:
+            return self.sanitize_name(uname)
+        return "PLAYER"
+
+    def sanitize_name(self, name):
+        cleaned = "".join(ch for ch in str(name).upper() if ch.isalnum() or ch in "_- ")
+        cleaned = cleaned.strip()
+        return cleaned[:8] or "PLAYER"
+
+    def score_qualifies_top10(self):
+        if self.score <= 0:
+            return False
+        if len(self.top_scores) < 10:
+            return True
+        return self.score > self.top_scores[-1]["score"]
+
+    def add_top_score(self, name, score):
+        self.top_scores.append({"name": self.sanitize_name(name), "score": int(score)})
+        self.top_scores = sorted(self.top_scores, key=lambda item: item["score"], reverse=True)[:10]
+        if self.top_scores:
+            self.high_score = max(self.high_score, self.top_scores[0]["score"])
+
+    def prompt_for_name(self):
+        default = self.default_player_name()
+        buf = list(default)
+
+        self.stdscr.nodelay(False)
+        self.stdscr.keypad(True)
+
+        while True:
+            self.stdscr.erase()
+            title = "NEW TOP 10 SCORE"
+            prompt = "Enter name (max 8 chars):"
+            hint = "ENTER confirm | BACKSPACE edit"
+            current = "".join(buf)[:8]
+            self.safe_addstr(self.h // 2 - 2, max(1, self.w // 2 - len(title) // 2), title, self.color_attr(2) | curses.A_BOLD)
+            self.safe_addstr(self.h // 2, max(1, self.w // 2 - len(prompt) // 2), prompt, self.color_attr(1))
+            self.safe_addstr(self.h // 2 + 1, max(1, self.w // 2 - 5), f"[{current:<8}]", self.color_attr(4) | curses.A_BOLD)
+            self.safe_addstr(self.h // 2 + 3, max(1, self.w // 2 - len(hint) // 2), hint, self.color_attr(3))
+            self.stdscr.refresh()
+
+            ch = self.stdscr.getch()
+            if ch in (10, 13, curses.KEY_ENTER):
+                break
+            if ch in (curses.KEY_BACKSPACE, 127, 8):
+                if buf:
+                    buf.pop()
+                continue
+            if 32 <= ch <= 126 and len(buf) < 8:
+                char = chr(ch).upper()
+                if char.isalnum() or char in "_- ":
+                    buf.append(char)
+
+        name = "".join(buf).strip() or default
+        self.stdscr.nodelay(True)
+        return self.sanitize_name(name)
+
+    def show_top10_intro(self, seconds=3.0):
+        end_time = time.monotonic() + seconds
+        self.stdscr.nodelay(True)
+
+        while time.monotonic() < end_time:
+            self.stdscr.erase()
+            self.safe_addstr(1, max(1, self.w // 2 - 6), "TOP 10 SCORES", self.color_attr(2) | curses.A_BOLD)
+            self.safe_addstr(2, max(1, self.w // 2 - 8), "NAME     SCORE", self.color_attr(1) | curses.A_BOLD)
+
+            if self.top_scores:
+                for idx, entry in enumerate(self.top_scores[:10], start=1):
+                    y = 2 + idx
+                    if y >= self.h - 2:
+                        break
+                    line = f"{idx:>2}. {entry['name']:<8} {entry['score']:>6}"
+                    self.safe_addstr(y, max(1, self.w // 2 - 10), line, self.color_attr(1))
+            else:
+                self.safe_addstr(5, max(1, self.w // 2 - 6), "NO SCORES YET", self.color_attr(3))
+
+            self.stdscr.refresh()
+            time.sleep(0.05)
+
+    def finalize_score_submission(self):
+        if self.score_qualifies_top10():
+            name = self.prompt_for_name()
+            self.add_top_score(name, self.score)
+
+        self.high_score = max(self.high_score, self.score)
+        self.games_played += 1
+        self.save_score_file()
 
     def generate_terrain(self):
         base = self.play_bottom - 2
@@ -1029,8 +1153,7 @@ class Game:
         self.stdscr.nodelay(True)
 
     def game_over_screen(self):
-        self.games_played += 1
-        self.save_score_file()
+        self.finalize_score_submission()
         self.stdscr.nodelay(False)
         self.stdscr.erase()
         title = "GAME OVER"
@@ -1038,6 +1161,10 @@ class Game:
         hint = "Press any key to exit"
         self.safe_addstr(self.h // 2 - 1, max(1, self.w // 2 - len(title) // 2), title, self.color_attr(2) | curses.A_BOLD)
         self.safe_addstr(self.h // 2, max(1, self.w // 2 - len(score_line) // 2), score_line, self.color_attr(1))
+        if self.top_scores:
+            leader = self.top_scores[0]
+            leader_line = f"Top: {leader['name']} {leader['score']}"
+            self.safe_addstr(self.h // 2 + 1, max(1, self.w // 2 - len(leader_line) // 2), leader_line, self.color_attr(3))
         self.safe_addstr(self.h // 2 + 2, max(1, self.w // 2 - len(hint) // 2), hint, self.color_attr(4))
         self.stdscr.refresh()
         self.stdscr.getch()
@@ -1055,6 +1182,7 @@ def run(stdscr):
         stdscr.refresh()
         stdscr.getch()
         return
+    game.show_top10_intro(3.0)
     game.intro_screen()
     game.draw()
     game.loop()
