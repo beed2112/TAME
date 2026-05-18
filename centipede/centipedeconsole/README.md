@@ -5,7 +5,7 @@ Terminal Centipede-style fixed shooter built with Python `curses`.
 ## Controls
 - Arrow keys or `WASD`: move inside the lower player zone
 - `Space`: fire
-- `Esc`: pause / unpause
+- `Esc` or `P`: pause / unpause
 - `Q`: quit
 
 ## Features

@@ -10,7 +10,7 @@ Terminal Defender-style game built with Python `curses`.
 - `Space`: fire
 - `B`: smart bomb for the current visible area
 - `H`: hyperspace jump
-- `Esc`: pause / unpause
+- `Esc` or `P`: pause / unpause
 - `Q`: quit
 
 ## Install

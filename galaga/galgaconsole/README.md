@@ -6,7 +6,7 @@ Terminal-based Galaga-style game for Kali.
 - Left Arrow: move left
 - Right Arrow: move right
 - Space: shoot
-- Esc: pause/unpause
+- Esc or `P`: pause/unpause
 - Q: quit
 
 ## Install

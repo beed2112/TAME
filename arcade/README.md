@@ -13,12 +13,14 @@ cd <CLONELOC>/TAME/arcade
 ```
 
 ## Controls
+- Any key on splash: enter the cabinet selector
 - Arrow keys: move between cabinets
 - `1`, `2`, `3`, `4`: jump directly to a game
 - `Enter` or `Space`: launch the selected game
 - `Q`: quit the launcher
 
 ## Notes
+- The launcher opens with a TAME splash screen before the selector.
 - The launcher returns to the menu after a game exits.
 - Use a terminal at least `84x28` for the launcher.
 - Defender still needs the largest game window at `80x26`.

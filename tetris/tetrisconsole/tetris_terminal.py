@@ -447,7 +447,7 @@ class Game:
             if key in (ord("q"), ord("Q")):
                 self.running = False
                 return
-            if key == 27:
+            if key in (27, ord("p"), ord("P")):
                 self.paused = not self.paused
                 key = self.stdscr.getch()
                 continue

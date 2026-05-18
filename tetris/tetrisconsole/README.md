@@ -9,7 +9,7 @@ Terminal Tetris built with Python `curses`.
 - `Z` or `C`: rotate counter-clockwise
 - `Space`: hard drop
 - `H` or `V`: hold piece
-- `Esc`: pause / unpause
+- `Esc` or `P`: pause / unpause
 - `Q`: quit
 
 ## Features
