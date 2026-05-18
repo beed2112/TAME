@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TAME Game Cabinet</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121824;
+      --text: #e6edf3;
+      --muted: #8aa4b8;
+      --accent: #20e3b2;
+      --accent2: #6ee7ff;
+      --warn: #ffb454;
+      --ok: #20e3b2;
+      --danger: #ff6b6b;
+      --glow: #122033;
+      --grid1: rgba(32,227,178,0.06);
+      --grid2: rgba(110,231,255,0.05);
+      --note-bg: #1a1f2b;
+      --note-text: #e6edf3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: radial-gradient(1200px 800px at 70% 10%, var(--glow) 0%, var(--bg) 55%);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .deck { height: 100vh; width: 100vw; position: relative; }
+    .overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(transparent 24px, var(--grid1) 25px),
+        linear-gradient(90deg, transparent 24px, var(--grid2) 25px);
+      background-size: 26px 26px;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .slide { position: absolute; inset: 0; padding: 64px 84px; display: none; }
+    .slide.active { display: block; }
+    h1 { font-size: 54px; margin: 0 0 16px 0; color: var(--accent); }
+    h2 { font-size: 40px; margin: 0 0 16px 0; color: var(--accent); }
+    h3 { font-size: 28px; margin: 16px 0 8px 0; color: var(--accent2); }
+    p, li { font-size: 22px; line-height: 1.5; }
+    ul, ol { margin: 0 0 12px 24px; }
+    .panel { background: var(--panel); border: 1px solid #1d2a3a; border-radius: 14px; padding: 18px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.35); }
+    .note { border-left: 4px solid var(--warn); padding: 10px 12px; background: var(--note-bg); color: var(--note-text); margin: 12px 0; }
+    .note-success { border-left-color: var(--ok); }
+    .note-warning { border-left-color: var(--warn); }
+    .note-danger { border-left-color: var(--danger); }
+    .section { margin: 0 0 6px 0; color: var(--muted); font-size: 18px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .img { max-width: 100%; max-height: 70vh; display: block; margin: 10px auto; border-radius: 12px; border: 1px solid #1d2a3a; }
+    pre { background: #0e1521; border: 1px solid #1f2b3d; border-radius: 10px; padding: 14px; font-size: 16px; color: #d6f5ff; overflow: auto; max-height: 50vh; }
+    code { background: #0e1521; border: 1px solid #1f2b3d; border-radius: 6px; padding: 1px 6px; font-size: 0.95em; color: #d6f5ff; }
+    .footer { position: absolute; bottom: 18px; right: 24px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="overlay"></div>
+    <section class="slide active" id="s1">
+      <h1>TAME Game Cabinet</h1>
+      <p class="muted">Use ←/→ or Space to navigate</p>
+      <div class="footer">Slide 1</div>
+    </section>
+
+    <section class="slide" id="s2">
+      <h2>What TAME Is</h2>
+      <p class="section">Overview</p><ol><li>Terminal Arcade Multiple Emulator</li></ol><ul><li>Terminal-first arcade launcher for a local cabinet set</li><li>Built around lightweight Python <code>curses</code> games</li><li>Current cabinets: Galga, Defender, Tetris, Centipede</li><li>Designed to return to the launcher after each game exits</li></ul><div class="note"><b>Note:</b> TAME is positioned as a self-contained terminal arcade experience, not a general emulator frontend.</div>
+      <div class="footer">Slide 2</div>
+    </section>
+
+    <section class="slide" id="s3">
+      <h2>Launch Sequence</h2>
+      <p class="section">Overview</p><ol><li>Clone and enter the project</li></ol><ul><li><code>git clone https://github.com/beed2112/TAME.git</code></li><li><code>cd TAME</code></li><li><code>cd arcade</code></li></ul><ol><li>Start the cabinet launcher</li></ol><ul><li>Run <code>./run.sh</code></li><li>Use a terminal sized at least <code>84x28</code></li><li>Expect the launcher menu to remain available after a game closes</li></ul><pre>git clone https://github.com/beed2112/TAME.git
+cd TAME/arcade
+./run.sh</pre><div class="note note-warning"><b>Warning:</b> The global launcher fits in <code>84x28</code>, but some cabinets need more room. Defender is the tightest at <code>80x26</code>.</div>
+      <div class="footer">Slide 3</div>
+    </section>
+
+    <section class="slide" id="s4">
+      <h2>Cabinet Navigation</h2>
+      <p class="section">Overview</p><ol><li>Move around the launcher</li></ol><ul><li>Arrow keys move between cabinets</li><li><code>1</code>, <code>2</code>, <code>3</code>, <code>4</code> jump directly to a cabinet</li><li><code>Enter</code> or <code>Space</code> launches the selected game</li><li><code>Q</code> exits the launcher</li></ul><ol><li>Read cabinet status at a glance</li></ol><ul><li>Cabinet cards show title and subtitle</li><li>Each card includes minimum terminal size</li><li>Core controls are visible before launch</li><li>A moving ASCII <code>TAME</code> marquee stays active in the lower window</li></ul>
+      <div class="footer">Slide 4</div>
+    </section>
+
+    <section class="slide" id="s5">
+      <h2>Galga</h2>
+      <p class="section">Cabinets</p><ol><li>Cabinet role</li></ol><ul><li>Fast formation shooter</li><li>Smallest runtime footprint in the set</li><li>Python standard library only</li></ul><ol><li>Controls</li></ol><ul><li>Move: Left Arrow, Right Arrow</li><li>Fire: <code>Space</code></li><li>Pause: <code>Esc</code></li><li>Quit: <code>Q</code></li></ul><ol><li>Runtime notes</li></ol><ul><li>Launch path: <code>TAME/galaga/galgaconsole/run.sh</code></li><li>Minimum size: <code>55x22</code></li></ul>
+      <div class="footer">Slide 5</div>
+    </section>
+
+    <section class="slide" id="s6">
+      <h2>Defender</h2>
+      <p class="section">Cabinets</p><ol><li>Cabinet role</li></ol><ul><li>Most complex control scheme in the set</li><li>Horizontal survival and rescue gameplay</li><li>Includes multiple enemy types and human rescue flow</li></ul><ol><li>Controls</li></ol><ul><li>Thrust: Right or <code>D</code></li><li>Reverse thrust / flip: Left or <code>A</code></li><li>Altitude: Up or <code>W</code>, Down or <code>S</code></li><li>Fire: <code>Space</code></li><li>Smart bomb: <code>B</code></li><li>Hyperspace: <code>H</code></li><li>Pause/Quit: <code>Esc</code>, <code>Q</code></li></ul><ol><li>Runtime notes</li></ol><ul><li>Launch path: <code>TAME/defender/defenderconsole/run.sh</code></li><li>Minimum size: <code>80x26</code></li><li>Score data stored in <code>~/.defender_console</code></li></ul><div class="note note-danger"><b>Danger:</b> Defender has the highest screen and control overhead. It should be the baseline when validating cabinet host terminal size.</div>
+      <div class="footer">Slide 6</div>
+    </section>
+
+    <section class="slide" id="s7">
+      <h2>Tetris</h2>
+      <p class="section">Cabinets</p><ol><li>Cabinet role</li></ol><ul><li>Endless stack-management cabinet</li><li>Most feature-rich ruleset in the set</li><li>Good default demonstration cabinet for new users</li></ul><ol><li>Controls</li></ol><ul><li>Move: Left, Right</li><li>Soft drop: Down</li><li>Rotate clockwise: Up or <code>X</code></li><li>Rotate counter-clockwise: <code>Z</code> or <code>C</code></li><li>Hard drop: <code>Space</code></li><li>Hold piece: <code>H</code> or <code>V</code></li></ul><ol><li>Runtime notes</li></ol><ul><li>Features: seven-bag randomizer, ghost piece, hold, five-piece queue</li><li>Minimum size: <code>74x28</code></li><li>High score stored in <code>~/.tetris_console</code></li></ul>
+      <div class="footer">Slide 7</div>
+    </section>
+
+    <section class="slide" id="s8">
+      <h2>Centipede</h2>
+      <p class="section">Cabinets</p><ol><li>Cabinet role</li></ol><ul><li>Fixed shooter with expanding playfield usage</li><li>Strong arcade feel with mushroom and hazard interactions</li><li>Supports wave progression and persistent scoring</li></ul><ol><li>Controls</li></ol><ul><li>Move: Arrow keys or <code>WASD</code></li><li>Fire: <code>Space</code></li><li>Pause: <code>Esc</code></li><li>Quit: <code>Q</code></li></ul><ol><li>Runtime notes</li></ol><ul><li>Features: splitting centipedes, spider, flea, scorpion hazards</li><li>Minimum size: <code>78x30</code></li><li>High score stored in <code>~/.centipede_console</code></li></ul>
+      <div class="footer">Slide 8</div>
+    </section>
+
+    <section class="slide" id="s9">
+      <h2>Install and Runtime Expectations</h2>
+      <p class="section">Operations</p><ol><li>Environment assumptions</li></ol><ul><li>Linux terminal environment</li><li>Python <code>curses</code> available</li><li>No pip dependencies required for the included cabinets</li></ul><ol><li>Operational behavior</li></ol><ul><li>Cabinet launcher returns to menu after each game exits</li><li>Individual games are started via their own <code>run.sh</code></li><li>Install steps are available per cabinet via local <code>install.sh</code></li></ul><pre>cd TAME/&lt;cabinet&gt;/&lt;console-dir&gt;
+./install.sh
+./run.sh</pre>
+      <div class="footer">Slide 9</div>
+    </section>
+
+    <section class="slide" id="s10">
+      <h2>Workflow</h2>
+      <p class="section">Operations</p><ol><li>Get game info</li></ol><ul><li>Research the game we want to recreate in the terminal</li><li>Capture controls, gameplay loop, scoring, and distinctive mechanics</li></ul><ol><li>Save game info with the Obsidian web extension</li></ol><ul><li>Store source material and notes in reference folder</li><li>Keep references organized for later implementation work</li></ul><ol><li>Tell Codex we want to create a terminal version of the game</li></ol><ul><li>Use the collected notes as implementation context</li><li>Define the target experience and scope for the terminal build</li></ul><ol><li>Test and improve in a loop</li></ol><ul><li>Run the game</li><li>Check feel, controls, and readability</li><li>Iterate on gameplay until the cabinet is solid</li></ul><div class="note note-success"><b>Success:</b> This workflow keeps discovery, note capture, implementation, and iteration tightly connected.</div>
+      <div class="footer">Slide 10</div>
+    </section>
+
+  </div>
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let idx = 0;
+
+    function show(i) {
+      idx = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach((s, n) => s.classList.toggle('active', n === idx));
+      history.replaceState(null, '', '#s' + (idx + 1));
+    }
+
+    function fromHash() {
+      const m = location.hash.match(/#s(\d+)/);
+      if (!m) return;
+      const n = parseInt(m[1], 10) - 1;
+      if (!Number.isNaN(n)) show(n);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        show(idx + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        show(idx - 1);
+      }
+    });
+
+    window.addEventListener('hashchange', fromHash);
+    if (!location.hash || location.hash === '#') {
+      history.replaceState(null, '', '#s1');
+    }
+    fromHash();
+  </script>
+</body>
+</html>
