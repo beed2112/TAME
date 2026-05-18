@@ -554,7 +554,9 @@ class Game:
         self.stdscr.erase()
         board_top = 4
         board_left = max(18, self.w // 2 - 10)
-        board_right = board_left + (BOARD_WIDTH * 2) + 1
+        # Each board column renders as two characters, so the right border
+        # should sit immediately after the visible playfield.
+        board_right = board_left + (BOARD_WIDTH * 2)
 
         self.safe_addstr(0, 2, f"SCORE {self.score:07d}", self.color_attr(8) | curses.A_BOLD)
         self.safe_addstr(1, 2, f"HIGH  {max(self.high_score, self.score):07d}", self.color_attr(8))
