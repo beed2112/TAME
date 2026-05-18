@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import curses
+import math
 import random
 import subprocess
 import time
@@ -10,7 +11,8 @@ from pathlib import Path
 FRAME_SECONDS = 0.05
 MIN_WIDTH = 84
 MIN_HEIGHT = 28
-STAR_COUNT = 52
+STAR_COUNT = 152
+SPLASH_SECONDS = 5
 TAME_ART = (
     " _____   _   __  __  _____ ",
     "|_   _| / \\ |  \\/  || ____|",
@@ -120,6 +122,8 @@ class Launcher:
         self.stars: list[Star] = []
         self.status_text = "SELECT A CABINET"
         self.status_until = 0.0
+        self.splash_active = True
+        self.splash_started = time.monotonic()
 
     def setup(self):
         try:
@@ -202,6 +206,13 @@ class Launcher:
             if key in (ord("q"), ord("Q")):
                 self.running = False
                 return
+            if self.splash_active:
+                self.splash_active = False
+                self.flash_status("SELECT A CABINET", duration=1.4)
+                if key == curses.KEY_RESIZE:
+                    self.refresh_size()
+                    self.reset_stars()
+                return
             if key in (curses.KEY_LEFT, curses.KEY_UP):
                 self.selected = (self.selected - 1) % len(GAMES)
             elif key in (curses.KEY_RIGHT, curses.KEY_DOWN, ord("\t")):
@@ -218,6 +229,8 @@ class Launcher:
 
     def update(self):
         self.refresh_size()
+        if self.splash_active and time.monotonic() - self.splash_started >= SPLASH_SECONDS:
+            self.splash_active = False
         spawn_bottom = max(6, self.h - 8)
         for star in self.stars:
             star.x -= star.speed
@@ -236,12 +249,15 @@ class Launcher:
             return
         self.draw_border()
         self.draw_stars()
-        self.draw_marquee()
-        self.draw_selector_strip()
-        self.draw_cabinet()
         self.draw_floor()
-        self.draw_tame_banner()
-        self.draw_footer()
+        if self.splash_active:
+            self.draw_splash()
+        else:
+            self.draw_marquee()
+            self.draw_selector_strip()
+            self.draw_cabinet()
+            self.draw_tame_banner()
+            self.draw_footer()
         self.stdscr.refresh()
 
     def draw_size_warning(self):
@@ -281,6 +297,32 @@ class Launcher:
         self.center(top + 2, "Arrow keys move   Enter launches   Q exits", self.color(1))
         self.put(top + 1, left + 2, "[=]", self.color(6) | curses.A_BOLD)
         self.put(top + 1, right - 4, "[=]", self.color(6) | curses.A_BOLD)
+
+    def draw_splash(self):
+        elapsed = time.monotonic() - self.splash_started
+        art_width = len(TAME_ART[0])
+        final_left = max(2, (self.w - art_width) // 2)
+        intro_progress = min(1.0, elapsed / 1.25)
+        eased = 1.0 - ((1.0 - intro_progress) ** 3)
+        start_left = -art_width
+        art_left = int(start_left + ((final_left - start_left) * eased))
+        wobble = int(round(math.sin(elapsed * 9.5) * (1.0 - intro_progress) * 2.5))
+        art_top = max(4, self.h // 2 - 8 + wobble)
+        spinner_frames = ("|", "/", "-", "\\")
+        spinner = spinner_frames[int(elapsed * 14) % len(spinner_frames)]
+        colors = [4, 6, 3, 5]
+        for idx, line in enumerate(TAME_ART):
+            self.put(art_top + idx, art_left, line, self.color(colors[idx]) | curses.A_BOLD)
+
+        orbit_y = art_top + 1
+        self.put(orbit_y, max(2, art_left - 4), f"<{spinner}>", self.color(3) | curses.A_BOLD)
+        self.put(orbit_y, min(self.w - 5, art_left + art_width + 1), f"<{spinner}>", self.color(6) | curses.A_BOLD)
+
+        pulse_attr = self.color(1) | (curses.A_BOLD if int(elapsed * 4) % 2 == 0 else 0)
+        self.center(art_top + len(TAME_ART) + 2, "Terminal Arcade Multiple Emulator", pulse_attr)
+        self.center(art_top + len(TAME_ART) + 4, "Galga   Defender   Tetris   Centipede", self.color(4))
+        self.center(art_top + len(TAME_ART) + 6, "Press any key to enter the cabinet selector", self.color(6) | curses.A_BOLD)
+        self.center(art_top + len(TAME_ART) + 7, "Q exits", self.color(1))
 
     def draw_selector_strip(self):
         y = 7
