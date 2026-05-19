@@ -9,6 +9,7 @@
 
 Terminal Arcade Multiple Emulator.
 
+
 TAME is a terminal-first arcade launcher for the local cabinet set:
 - Galga
 - Defender
