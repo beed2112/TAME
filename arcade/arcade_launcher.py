@@ -108,6 +108,38 @@ GAMES = (
         ),
         controls=("MOVE: ARROWS WASD", "FIRE: SPACE", "PAUSE: ESC", "QUIT: Q"),
     ),
+    Cabinet(
+        key="5",
+        title="BREAKOUT",
+        subtitle="SHATTER THE WALL",
+        path=ROOT / "breakout" / "breakoutconsole" / "run.sh",
+        min_size="84x30",
+        accent_pair=2,
+        art=(
+            "[][][][][][][][][]",
+            "[][][][][][][][][]",
+            "     o            ",
+            "                  ",
+            "      =======     ",
+        ),
+        controls=("MOVE: LEFT RIGHT", "MOVE: A D", "SERVE: SPACE ENTER", "PAUSE: ESC"),
+    ),
+    Cabinet(
+        key="6",
+        title="ASTEROIDS",
+        subtitle="VECTOR FIELD SURVIVAL",
+        path=ROOT / "asteroids" / "asteroidsconsole" / "run.sh",
+        min_size="80x26",
+        accent_pair=1,
+        art=(
+            "    ##      ##    ",
+            "  ### ##  ## ###  ",
+            "      >>>>>>      ",
+            "        >>>       ",
+            "      *           ",
+        ),
+        controls=("TURN: LEFT RIGHT", "THRUST: UP W", "FIRE: SPACE", "HYPER: H"),
+    ),
 )
 
 
@@ -320,7 +352,7 @@ class Launcher:
 
         pulse_attr = self.color(1) | (curses.A_BOLD if int(elapsed * 4) % 2 == 0 else 0)
         self.center(art_top + len(TAME_ART) + 2, "Terminal Arcade Multiple Emulator", pulse_attr)
-        self.center(art_top + len(TAME_ART) + 4, "Galga   Defender   Tetris   Centipede", self.color(4))
+        self.center(art_top + len(TAME_ART) + 4, "Galga   Defender   Tetris   Centipede   Breakout   Asteroids", self.color(4))
         self.center(art_top + len(TAME_ART) + 6, "Press any key to enter the cabinet selector", self.color(6) | curses.A_BOLD)
         self.center(art_top + len(TAME_ART) + 7, "Q exits", self.color(1))
 
@@ -416,7 +448,7 @@ class Launcher:
     def draw_footer(self):
         status = self.current_status()
         self.center(self.h - 8, status, self.color(6) | curses.A_BOLD)
-        self.center(self.h - 7, "1-4 jump directly   Space also launches   After a game exits, you return here", self.color(1))
+        self.center(self.h - 7, "1-6 jump directly   Space also launches   After a game exits, you return here", self.color(1))
 
     def launch_game(self, cabinet):
         if not cabinet.path.exists():
